@@ -26,13 +26,16 @@ const ResumeRefiner = () => {
     setIsLoading(true);
     
     try {
+      console.log("Extracting text from PDF...");
       const text = await extractTextFromPDF(file);
+      console.log("Extracted text length:", text.length);
       setOriginalResume(text);
       toast({
         title: "Resume uploaded",
         description: "Your resume has been successfully uploaded.",
       });
     } catch (error) {
+      console.error("PDF extraction error:", error);
       toast({
         title: "Error",
         description: "Failed to extract text from PDF. Please try again.",
@@ -68,17 +71,22 @@ const ResumeRefiner = () => {
     setIsProcessing(true);
     
     try {
+      console.log("Enhancing resume for role:", jobRole);
+      console.log("Original resume length:", originalResume.length);
+      
       const improved = await enhanceResume({
         resumeText: originalResume,
-        jobRole
+        jobRole: jobRole
       });
       
+      console.log("Enhanced resume received, length:", improved.length);
       setEnhancedResume(improved);
       toast({
         title: "Resume enhanced",
         description: "Your resume has been successfully enhanced.",
       });
     } catch (error: any) {
+      console.error("Enhancement error:", error);
       toast({
         title: "Error",
         description: error.message || "Failed to enhance resume. Please try again.",

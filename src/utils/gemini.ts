@@ -12,6 +12,8 @@ interface EnhanceResumeProps {
 
 export async function enhanceResume({ resumeText, jobRole }: EnhanceResumeProps): Promise<string> {
   try {
+    console.log("Starting Gemini API call with resume length:", resumeText.length);
+    
     const prompt = `
       You are an expert resume writer and career coach. 
       Your task is to enhance and optimize the following resume for the role of "${jobRole}".
@@ -29,9 +31,22 @@ export async function enhanceResume({ resumeText, jobRole }: EnhanceResumeProps)
       Respond ONLY with the optimized resume text. Do not include any explanations, introductions, or comments.
     `;
 
+    // Check if we have content to process
+    if (!resumeText || resumeText.trim().length < 10) {
+      throw new Error("Resume text is too short or empty");
+    }
+
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    return response.text();
+    const enhancedText = response.text();
+    
+    console.log("Gemini API response received, length:", enhancedText.length);
+    
+    if (!enhancedText || enhancedText.trim().length < 10) {
+      throw new Error("API returned empty or very short response");
+    }
+    
+    return enhancedText;
   } catch (error) {
     console.error("Error enhancing resume:", error);
     throw new Error("Failed to enhance resume. Please try again later.");
