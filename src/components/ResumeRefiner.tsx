@@ -26,10 +26,13 @@ const ResumeRefiner = () => {
     setIsLoading(true);
     
     try {
-      console.log("Extracting text from PDF...");
+      console.log("Starting PDF extraction for file:", file.name);
+      console.log("File size:", file.size, "bytes");
+      
       const text = await extractTextFromPDF(file);
-      console.log("Extracted text length:", text.length);
+      console.log("PDF extraction successful. Text length:", text.length);
       setOriginalResume(text);
+      
       toast({
         title: "Resume uploaded",
         description: "Your resume has been successfully uploaded.",
@@ -50,7 +53,13 @@ const ResumeRefiner = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    console.log("Form submitted with:", {
+      originalResumeLength: originalResume.length,
+      jobRole,
+    });
+    
     if (!originalResume) {
+      console.log("No resume text available");
       toast({
         title: "No resume",
         description: "Please upload a resume first.",
@@ -60,6 +69,7 @@ const ResumeRefiner = () => {
     }
     
     if (!jobRole) {
+      console.log("No job role provided");
       toast({
         title: "No job role",
         description: "Please enter a target job role.",
@@ -69,17 +79,20 @@ const ResumeRefiner = () => {
     }
     
     setIsProcessing(true);
+    console.log("Processing started...");
     
     try {
       console.log("Enhancing resume for role:", jobRole);
-      console.log("Original resume length:", originalResume.length);
+      console.log("Original resume text (first 100 chars):", originalResume.substring(0, 100));
       
       const improved = await enhanceResume({
         resumeText: originalResume,
         jobRole: jobRole
       });
       
-      console.log("Enhanced resume received, length:", improved.length);
+      console.log("Enhancement successful. Result length:", improved.length);
+      console.log("Enhanced text (first 100 chars):", improved.substring(0, 100));
+      
       setEnhancedResume(improved);
       toast({
         title: "Resume enhanced",
@@ -93,6 +106,7 @@ const ResumeRefiner = () => {
         variant: "destructive",
       });
     } finally {
+      console.log("Processing finished");
       setIsProcessing(false);
     }
   };
