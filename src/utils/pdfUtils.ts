@@ -1,9 +1,8 @@
 
 import * as pdfjs from 'pdfjs-dist';
 
-// Need to set the worker path
-const pdfjsWorker = await import('pdfjs-dist/build/pdf.worker.entry');
-pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+// Setup the worker source with a different approach that's compatible with Vite
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 export const extractTextFromPDF = async (file: File): Promise<string> => {
   try {
